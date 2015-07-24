@@ -1,19 +1,14 @@
 language: objective-c
 install:
-- gem install cocoapods --no-rdoc --no-ri --no-document --quiet
-- curl -OL https://github.com/Carthage/Carthage/releases/download/0.7.4/Carthage.pkg
-- sudo /usr/sbin/installer -pkg Carthage.pkg -target /
+- make bootstrap
 before_script:
-- source script/key.sh
-- import_certs
+- script/cert --import
 script:
-- xcodebuild test -project leveldb.xcodeproj -scheme leveldb -sdk iphonesimulator
-- carthage build --no-skip-current
-- pod spec lint --allow-warnings
+- script/cibuild make test
 after_script:
-- delete_keychain
+- script/cert --remove
 before_deploy:
-- zip -r -9 leveldb.framework.zip Carthage/Build/iOS/leveldb.framework
+- make release
 after_deploy:
 - pod trunk push --allow-warnings
 deploy:
